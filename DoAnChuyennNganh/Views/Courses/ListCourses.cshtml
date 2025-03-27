@@ -1,0 +1,82 @@
+﻿@model IEnumerable<DoAnChuyennNganh.Models.Courses> 
+
+@{
+    ViewData["Title"] = "Danh Sách Khóa Học";
+    Layout = "~/Views/Shared/_Layoutstudent.cshtml";
+}
+<br />
+<br />
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+<h2>Danh Sách Khóa Học</h2>
+<a asp-controller="Courses" asp-action="CreateCourses" class="btn btn-primary">Thêm khóa học</a>
+<br />
+<br />
+<table class="table table-bordered">
+    <thead>
+        <tr class="table-primary">
+            <th>Tên Khóa Học</th>
+            <th>Hình ảnh</th>
+            <th>Mô Tả</th>
+            <th>Giá</th>
+            <th>Trạng Thái</th>
+            <th>Thao Tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <td>@course.Name</td>
+                <td>
+                    <img src="@course.Image_url" alt="Khóa học" style="max-height: 500px; width: 300px;" />
+                </td>
+                <td>@Html.Raw(course.Description)</td>
+                <td>@string.Format("{0:N0}", course.Price) VNĐ</td>
+                <td>
+                    @switch (course.Status)
+                    {
+                        case DoAnChuyennNganh.Models.CourseStatus.Pending:
+                            <span class="text-warning">Chưa Xét Duyệt</span>
+                            ;
+                            break;
+                        case DoAnChuyennNganh.Models.CourseStatus.UnderReview:
+                            <span class="text-primary">Đang Xét Duyệt</span>
+                            ;
+                            break;
+                        case DoAnChuyennNganh.Models.CourseStatus.Approved:
+                            <span class="text-success">Đã Duyệt</span>
+                            ;
+                            break;
+                        case DoAnChuyennNganh.Models.CourseStatus.Hiden:
+                            <span class="text-danger">Đã bị ẩn</span>
+                            ;
+                            break;
+                    }
+                </td>
+                <td>
+                    <a asp-action="DetailsCourses" asp-route-id="@course.Id" class="btn btn-info">Chi Tiết</a>
+                    <a asp-action="EditCourses" asp-route-Id="@course.Id" class="btn btn-warning">Chỉnh Sửa</a>
+
+                    @if (course.Status == CourseStatus.Pending)
+                    {
+                        <form method="post" asp-action="SubmitCourseForApproval" asp-route-id="@course.Id" style="display:inline;">
+                            <button class="btn btn-primary" onclick="return confirm('Bạn có chắc chắn muốn gửi xét duyệt khóa học này?');">Gửi Xét Duyệt</button>
+                        </form>
+                        
+                        <form method="post" asp-action="DeleteCourse" asp-route-id="@course.Id" style="display:inline;">
+                            <button class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa khóa học này?');">Xóa</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

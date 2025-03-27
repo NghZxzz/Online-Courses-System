@@ -1,0 +1,74 @@
+﻿@model IEnumerable<dynamic>
+<h2>Danh sách khóa học đã ghi danh</h2>
+<div class="container mt-4">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            var course = item.Course;
+            var lectureCount = item.LectureCount;
+            var completedLectureCount = item.CompletedLectureCount;
+            var averageRating = item.AverageRating;
+
+            // Tính toán tiến độ hoàn thành
+            var progressPercentage = lectureCount > 0 ? (completedLectureCount * 100) / lectureCount : 0;
+            var isCompleted = progressPercentage == 100;
+
+            <div class="col-12 col-sm-6 col-md-6 col-lg-4 mb-4">
+                <div class="custom-media border rounded p-3">
+                    <a href="#">
+                        <img src="@course.Image_url" alt="Khóa học" style="height: 280px; width: 100%;" />
+                    </a>
+                    <div class="custom-media-body">
+                        <!-- Thông tin khóa học -->
+                        <div class="d-flex justify-content-between pb-3">
+                            <div class="text-primary">
+                                <span class="uil uil-book-open"></span>
+                                <span>@lectureCount bài học</span>
+                            </div>
+                            <div class="review">
+                                <span>(@averageRating.ToString("0.0"))</span>
+                                <span class="icon-star text-warning"></span>
+                            </div>
+                        </div>
+                        <h3 class="text-center">@course.Name</h3>
+
+                        <!-- Thanh tiến độ -->
+                        <div class="progress mb-2">
+                            <div class="progress-bar" role="progressbar" style="width: @progressPercentage%;" aria-valuenow="@progressPercentage" aria-valuemin="0" aria-valuemax="100">
+                                @progressPercentage%
+                            </div>
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <p class="text-center @((isCompleted) ? "text-success" : "text-primary")">
+                            @if (isCompleted)
+                            {
+                                <strong>Đã hoàn thành</strong>
+                            }
+                            else
+                            {
+                                <strong>Đang học</strong>
+                            }
+                        </p>
+
+                        <!-- Nút hành động -->
+                        <div class="border-top d-flex justify-content-center pt-3 mt-3 align-items-center">
+                            <div>
+                                @if (course.Status == CourseStatus.Approved)
+                                {
+                                    <a asp-area="" asp-route-id="@course.Id" asp-controller="Student" asp-action="DetailsCourses">
+                                        <h2 class="text-center">HỌC</h2>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <h3 style="color:darkgray;">Khóa học đã bị tạm ẩn</h3>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

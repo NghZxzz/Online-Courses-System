@@ -1,0 +1,28 @@
+﻿@model DoAnChuyennNganh.Models.VnPayModel
+
+<div class="container mt-4">
+    <h2>Thanh toán thành công</h2>
+    <table class="table table-bordered">
+        <tr>
+            <th>Mã giao dịch:</th>
+            <td>@Model.TransactionId</td>
+        </tr>
+        <tr>
+            <th>Mã đơn hàng:</th>
+            <td>@Model.OrderId</td>
+        </tr>
+        <tr>
+            <th>Phương thức thanh toán:</th>
+            <td>@Model.PaymentMethod</td>
+        </tr>
+        <tr>
+            <th>Mã thanh toán:</th>
+            <td>@Model.PaymentId</td>
+        </tr>
+        <tr>
+            <th>Mô tả đơn hàng:</th>
+            <td>@Model.OrderDescription</td>
+        </tr>
+    </table>
+    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Quay lại trang chủ</a>
+</div>

@@ -1,0 +1,49 @@
+﻿@model DoAnChuyennNganh.Models.Courses
+
+@{
+    ViewData["Title"] = "Chi Tiết Khóa Học";
+    Layout = "~/Views/Shared/_Layoutstudent.cshtml";
+}
+<div>
+    <a asp-controller="Courses" asp-action="ListCourses" class="btn btn-primary py-2 px-3" style="margin-bottom: 0.5cm; border-radius: 15px;">
+        Quay lại
+    </a>
+</div>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+<h2>Chi Tiết Khóa Học: @Model.Name</h2>
+
+<a asp-action="CreateSection" asp-route-courseId="@Model.Id" class="btn btn-primary">Thêm Phần</a>
+<table class="table table-bordered">
+    <thead>
+        <tr class="table-primary">
+            <th>Tên Phần</th>
+            <th>Thao Tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sections in Model.Sections)
+        {
+            <tr>
+                <td>@sections.Name</td>
+                <td>
+                    <a asp-action="EditSection" asp-route-Id="@sections.Id" class="btn btn-warning">Chỉnh Sửa</a>|
+                    <a asp-action="DetailsSection" asp-route-sectionId="@sections.Id" class="btn btn-info">Chi Tiết</a>|
+                    <form asp-action="DeleteSection" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa phần này và tất cả các bài giảng liên quan?');">
+                        <input type="hidden" name="id" value="@sections.Id" />
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

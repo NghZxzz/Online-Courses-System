@@ -1,0 +1,95 @@
+﻿@model IEnumerable<DoAnChuyennNganh.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Admin Page";
+    Layout = "~/Views/Shared/_Layoutadmin.cshtml";
+    var userRoles = ViewBag.UserRoles as Dictionary<string, IList<string>>;
+}
+
+<h1>Quản lý người dùng</h1>
+
+<!-- Form Tìm kiếm và Lọc -->
+<form method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text" name="searchQuery" value="@ViewBag.SearchQuery" class="form-control" placeholder="Tìm theo tên...">
+        </div>
+        <div class="col-md-4">
+            <select name="roleFilter" class="form-control">
+                <option value="">-- Lọc theo vai trò --</option>
+                @foreach (var role in ViewBag.Roles)
+                {
+                    <option value="@role" selected="@(ViewBag.RoleFilter == role ? "selected" : null)">@role</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Lọc</button>
+        </div>
+    </div>
+</form>
+
+<!-- Bảng danh sách người dùng -->
+<table class="table table-bordered">
+    <thead>
+        <tr class="table-warning">
+            <th>Email</th>
+            <th>Họ</th>
+            <th>Tên</th>
+            <th>Giới tính</th>
+            <th>Ngày Sinh</th>
+            <th>Trạng Thái</th>
+            <th>Vai trò</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="table-success">
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Gender)</td>
+                <td>@(item.Birthday.HasValue ? item.Birthday.Value.ToString("dd/MM/yyyy") : "")</td>
+                <td><span class="badge badge-success">@Html.DisplayFor(modelItem => item.Status)</span></td>
+                <td>
+                    @if (userRoles.ContainsKey(item.Id))
+                    {
+                        @foreach (var role in userRoles[item.Id])
+                        {
+                            <span class="badge bg-primary">@role</span>
+                        }
+                    }
+                </td>
+                <td>
+                    <a asp-action="Manage" asp-route-userId="@item.Id" class="btn btn-warning btn-rounded">Sửa vai trò</a>
+                    @if (item.Status == "Đang hoạt động")
+                    {
+                        <form asp-action="LockAccount" asp-route-userId="@item.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Khóa</button>
+                        </form>
+                    }
+                    else if (item.Status == "Bị khóa")
+                    {
+                        <form asp-action="UnlockAccount" asp-route-userId="@item.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-success btn-sm">Mở khóa</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Phân trang -->
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        @for (var i = 1; i <= Math.Ceiling((double)ViewBag.TotalUsers / ViewBag.PageSize); i++)
+        {
+            <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                <a class="page-link" href="?page=@i&searchQuery=@ViewBag.SearchQuery&roleFilter=@ViewBag.RoleFilter">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

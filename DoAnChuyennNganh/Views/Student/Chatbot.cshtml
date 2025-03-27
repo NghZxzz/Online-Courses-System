@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "Chatbot";
+}
+
+<h2>Chatbot</h2>
+
+<div id="chatContainer" style="border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto; margin-bottom: 10px;">
+    <!-- Lịch sử chat sẽ hiển thị tại đây -->
+</div>
+
+<form id="chatForm" style="margin-top: 10px;">
+    <textarea id="userQuery" placeholder="Nhập câu hỏi của bạn..." style="width: 100%; height: 50px; border-radius: 5px; padding: 10px; margin-bottom: 10px;"></textarea>
+    <button type="submit" class="btn btn-primary" style="width: 100px;">Gửi</button>
+</form>
+
+<style>
+    /* Tin nhắn của người dùng */
+    .user-message {
+        text-align: right;
+        background-color: #d1ecf1;
+        color: #0c5460;
+        padding: 10px;
+        border-radius: 10px;
+        margin: 5px 0;
+        max-width: 70%;
+        float: right;
+        clear: both;
+    }
+
+    /* Tin nhắn của Chatbot */
+    .bot-message {
+        text-align: left;
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 10px;
+        margin: 5px 0;
+        max-width: 70%;
+        float: left;
+        clear: both;
+    }
+
+    /* Khung chat */
+    #chatContainer {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 400px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+    }
+
+    /* Nút gửi */
+    button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<script>
+    // Tải lịch sử chat từ server
+    async function loadChatHistory() {
+        const response = await fetch('/api/chatbot/GetChatHistory'); // Gọi API để lấy lịch sử
+        const messages = await response.json();
+
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.innerHTML = '';
+
+        messages.forEach(msg => {
+            const userMessage = `<div class="user-message">${msg.userMessage}</div>`;
+            const botResponse = `<div class="bot-message">${msg.botResponse}</div>`;
+            chatContainer.innerHTML += userMessage + botResponse;
+        });
+
+        chatContainer.scrollTop = chatContainer.scrollHeight; // Cuộn xuống cuối
+    }
+
+    // Gửi tin nhắn
+    document.getElementById('chatForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const userQuery = document.getElementById('userQuery').value;
+
+        // Gửi yêu cầu tới API chatbot
+        const response = await fetch('/api/chatbot/GetResponse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userQuery })
+        });
+
+        const botResponse = await response.text();
+
+        // Xóa nội dung input sau khi gửi
+        document.getElementById('userQuery').value = '';
+
+        // Cập nhật giao diện với tin nhắn mới
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.innerHTML += `<div class="user-message">${userQuery}</div>`;
+        chatContainer.innerHTML += `<div class="bot-message">${botResponse}</div>`;
+        chatContainer.scrollTop = chatContainer.scrollHeight; // Cuộn xuống cuối
+    });
+
+    // Tải lịch sử chat khi trang được load
+    window.onload = loadChatHistory;
+</script>

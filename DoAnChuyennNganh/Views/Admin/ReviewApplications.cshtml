@@ -1,0 +1,68 @@
+﻿@model IEnumerable<TeacherApplication>
+@{
+    ViewData["Title"] = "Xét duyệt giảng viên";
+    Layout = "~/Views/Shared/_Layoutadmin.cshtml";
+}
+
+    <h2 class="mb-4">Danh sách đơn đăng ký làm giảng viên</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr class="table-primary">
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Chuyên ngành</th>
+                <th>Bằng cấp</th>
+                <th>Kinh nghiệm</th>
+                <th>Trạng thái</th>
+                <th>Minh chứng</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var application in Model)
+            {
+                <tr>
+                    <td>@application.FullName</td>
+                    <td>@application.Email</td>
+                    <td>@application.Major</td>
+                    <td>@application.Degree</td>
+                    <td>@application.TeachingExperience</td>
+                    <td>
+                        @if (application.Status == ApplicationStatus.Pending)
+                        {
+                            <span class="badge badge-warning">Đang chờ duyệt</span>
+                        }
+                        else if (application.Status == ApplicationStatus.Approved)
+                        {
+                            <span class="badge badge-success">Đã được duyệt</span>
+                        }
+                        else if (application.Status == ApplicationStatus.Rejected)
+                        {
+                            <span class="badge badge-danger">Bị từ chối</span>
+                        }
+                    </td>
+                    <td>
+                        @foreach (var file in application.ApplicationFiles)
+                        {
+                            <a href="@file.FileUrl" target="_blank" class="d-block">@file.FileName</a>
+                        }
+                    </td>
+                    <td>
+                        @if (application.Status == ApplicationStatus.Pending)
+                        {
+                            <!-- Nút chấp nhận -->
+                            <form asp-action="ApproveApplication" method="post" style="display: inline-block;">
+                                <input type="hidden" name="id" value="@application.Id" />
+                                <button type="submit" class="btn btn-success">Chấp nhận</button>
+                            </form>
+                            <!-- Nút từ chối -->
+                            <form asp-action="RejectApplication" method="post" style="display: inline-block;">
+                                <input type="hidden" name="id" value="@application.Id" />
+                                <button type="submit" class="btn btn-danger">Từ chối</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

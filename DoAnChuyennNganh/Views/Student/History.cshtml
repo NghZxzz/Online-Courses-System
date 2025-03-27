@@ -1,0 +1,37 @@
+﻿@model IEnumerable<DoAnChuyennNganh.Models.VnPayModel>
+
+<div class="container mt-4">
+    <h2>Lịch sử đơn hàng</h2>
+    @if (!Model.Any())
+    {
+        <p>Bạn chưa có đơn hàng nào.</p>
+    }
+    else
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Mã giao dịch</th>
+                    <th>Mã đơn hàng</th>
+                    <th>Phương thức thanh toán</th>
+                    <th>Mã thanh toán</th>
+                    <th>Mô tả đơn hàng</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@order.TransactionId</td>
+                        <td>@order.OrderId</td>
+                        <td>@order.PaymentMethod</td>
+                        <td>@order.PaymentId</td>
+                        <td>@order.OrderDescription</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

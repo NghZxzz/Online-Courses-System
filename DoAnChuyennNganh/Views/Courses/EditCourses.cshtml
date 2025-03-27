@@ -1,0 +1,60 @@
+﻿@model DoAnChuyennNganh.Models.Courses
+
+@{
+    ViewData["Title"] = "Chỉnh Sửa Khóa Học";
+}
+
+<div>
+    <a asp-action="ListCourses" class="btn btn-primary py-2 px-3" style="margin-bottom: 0.5cm; border-radius: 15px;">Quay lại</a>
+</div>
+
+<h2>Chỉnh Sửa Khóa Học</h2>
+
+<form asp-action="EditCourses" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Description">Mô tả:</label>
+        <textarea id="Description" name="Description" class="form-control">@Model.Description</textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SubjectId" class="control-label"></label>
+        <select asp-for="SubjectId" class="form-control" asp-items="ViewBag.Categories"></select>
+    </div>
+    <div class="form-group">
+        <label>Hình ảnh hiện tại:</label>
+        @if (!string.IsNullOrEmpty(Model.Image_url))
+        {
+            <img src="@Model.Image_url" alt="Hình ảnh hiện tại" style="max-width: 300px;" />
+        }
+    </div>
+    <div class="form-group">
+        <label for="imageFile">Chọn hình ảnh mới (nếu có):</label>
+        <input type="file" name="imageFile" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+</form>
+
+
+@section Scripts {
+    @{
+        <script src="//cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+        <script>
+            // Khởi tạo CKEditor cho trường mô tả
+            CKEDITOR.replace('Description');
+        </script>
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

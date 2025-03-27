@@ -1,0 +1,196 @@
+﻿@model DoAnChuyennNganh.Models.Quiz
+
+<h2>@Model.Title</h2>
+
+<div>
+    <button class="btn btn-primary py-2 px-3" style="margin-bottom: 0.5cm; border-radius: 15px;" onclick="history.back()">Quay lại</button>
+</div>
+<div id="quizManagement">
+    <h3>Quản lý Câu Hỏi và Đáp Án</h3>
+
+    <!-- Form thêm câu hỏi -->
+    <div class="form-group mb-3">
+        <input type="text" id="questionText" placeholder="Nhập câu hỏi" class="form-control mb-2" />
+        <button type="button" onclick="addQuestion()" class="btn btn-secondary">Thêm Câu Hỏi</button>
+    </div>
+
+    <!-- Danh sách câu hỏi và đáp án -->
+    <div id="questionsList">
+        @for (int i = 0; i < Model.Questions.Count; i++)
+        {
+            var question = Model.Questions[i];
+            <div id="question-@question.Id" class="question-box mb-3 p-3">
+                <h5><strong>Câu hỏi @(@i + 1):</strong> @question.Text</h5>
+                <button type="button" onclick="updateQuestion(@question.Id)" class="btn btn-sm btn-secondary">Chỉnh Sửa</button>
+                <button type="button" onclick="deleteQuestion(@question.Id)" class="btn btn-sm btn-danger">Xóa</button>
+
+                <!-- Đường kẻ ngang ngăn cách câu hỏi và câu trả lời -->
+                <hr style="border-top: 1px solid #ccc; margin-top: 15px; margin-bottom: 15px;" />
+
+                <div id="answers-@question.Id" class="mt-3">
+                    @foreach (var answer in question.Answers)
+                    {
+                        <div id="answer-@answer.Id" class="answer-item mb-2" style="color: @(answer.IsCorrect ? "green" : "red")">
+                            <span class="answer-text">@answer.Text</span> -
+                            <span class="answer-status">@((answer.IsCorrect) ? "Đúng" : "Sai")</span>
+                            <button type="button" onclick="updateAnswer(@answer.Id)" class="btn btn-sm btn-secondary">Chỉnh Sửa</button>
+                            <button type="button" onclick="deleteAnswer(@answer.Id)" class="btn btn-sm btn-danger">Xóa</button>
+                        </div>
+                    }
+                    <div class="form-group mt-2">
+                        <input type="text" placeholder="Nhập đáp án" id="answerText-@question.Id" class="form-control mb-1" />
+                        <label><input type="checkbox" id="isCorrect-@question.Id"> Đáp án đúng</label>
+                        <button type="button" onclick="addAnswer(@question.Id)" class="btn btn-sm btn-secondary">Thêm Đáp Án</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<style>
+    /* Khung câu hỏi */
+    .question-box {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    /* Đáp án lùi vào một chút */
+    .answer-item {
+        padding-left: 20px;
+    }
+
+        /* Đáp án đúng */
+        .answer-item.correct {
+            color: green;
+        }
+
+        /* Đáp án sai */
+        .answer-item.incorrect {
+            color: red;
+        }
+</style>
+@section Scripts {
+    <script>
+        let quizId = @Model.Id;
+
+
+        function addQuestion() {
+            const questionText = $('#questionText').val();
+            if (!questionText) return alert("Vui lòng nhập câu hỏi!");
+
+            $.post('/Courses/AddQuestion', { quizId: quizId, questionText: questionText }, function (response) {
+                if (response.success) {
+                    $('#questionsList').append(`
+                                <div id="question-${response.questionId}" class="mb-3">
+                                    <strong class="question-text">${response.questionText}</strong>
+                                    <button type="button" onclick="updateQuestion(${response.questionId})" class="btn btn-sm btn-secondary">Chỉnh Sửa</button>
+                                    <button type="button" onclick="deleteQuestion(${response.questionId})" class="btn btn-sm btn-danger">Xóa</button>
+                                    <div id="answers-${response.questionId}" class="mt-3">
+                                        <div class="form-group mt-2">
+                                            <input type="text" placeholder="Nhập đáp án" id="answerText-${response.questionId}" class="form-control mb-1" />
+                                            <label><input type="checkbox" id="isCorrect-${response.questionId}"> Đáp án đúng</label>
+                                            <button type="button" onclick="addAnswer(${response.questionId})" class="btn btn-sm btn-secondary">Thêm Đáp Án</button>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                </div>
+                            `);
+                    $('#questionText').val('');
+                    location.reload();
+                }
+            });
+        }
+
+        function updateQuestion(questionId) {
+            const newText = prompt("Nhập nội dung mới cho câu hỏi:");
+            if (!newText) return;
+
+            $.post('/Courses/UpdateQuestion', { questionId: questionId, newText: newText }, function (response) {
+                if (response.success) {
+                    $(`#question-${questionId} .question-text`).text(response.newText);
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
+
+        function deleteQuestion(questionId) {
+            if (!confirm("Bạn có chắc chắn muốn xóa câu hỏi này không?")) return;
+
+            $.post('/Courses/DeleteQuestion', { questionId: questionId }, function (response) {
+                if (response.success) {
+                    $(`#question-${questionId}`).remove();
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
+
+        function addAnswer(questionId) {
+            const answerText = $(`#answerText-${questionId}`).val();
+            const isCorrect = $(`#isCorrect-${questionId}`).is(':checked');
+
+            if (!answerText) return alert("Vui lòng nhập đáp án!");
+
+            $.post('/Courses/AddAnswer', { questionId: questionId, answerText: answerText, isCorrect: isCorrect }, function (response) {
+                if (response.success) {
+                    $(`#answers-${questionId}`).append(`
+                                <div id="answer-${response.answerId}" class="mb-2">
+                                    <span class="answer-text">${response.answerText}</span> -
+                                    <span class="answer-status">${response.isCorrect ? 'Đúng' : 'Sai'}</span>
+                                    <button type="button" onclick="updateAnswer(${response.answerId})" class="btn btn-sm btn-secondary">Chỉnh Sửa</button>
+                                    <button type="button" onclick="deleteAnswer(${response.answerId})" class="btn btn-sm btn-danger">Xóa</button>
+                                </div>
+                            `);
+                    $(`#answerText-${questionId}`).val('');
+                    $(`#isCorrect-${questionId}`).prop('checked', false);
+
+                    // Đảm bảo chỉ có một đáp án đúng cho mỗi câu hỏi
+                    if (response.isCorrect) {
+                        $(`#answers-${questionId} .answer-status`).text('Sai');
+                        $(`#answer-${response.answerId} .answer-status`).text('Đúng');
+                    }
+                    location.reload();
+                }
+            });
+        }
+
+        function updateAnswer(answerId) {
+            const newText = prompt("Nhập nội dung mới cho đáp án:");
+
+            if (!newText) return;
+            const isCorrect = confirm("Đây có phải là đáp án đúng không?");
+            $.post('/Courses/UpdateAnswer', { answerId: answerId, newText: newText, isCorrect: isCorrect }, function (response) {
+                if (response.success) {
+                    $(`#answer-${answerId} .answer-text`).text(response.newText);
+                    $(`#answer-${answerId} .answer-status`).text(response.isCorrect ? 'Đúng' : 'Sai');
+
+                    // Đảm bảo chỉ có một đáp án đúng cho mỗi câu hỏi
+                    if (response.isCorrect) {
+                        $(`#answers-${response.questionId} .answer-status`).text('Sai');
+                        $(`#answer-${answerId} .answer-status`).text('Đúng');
+                    }
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
+
+        function deleteAnswer(answerId) {
+            if (!confirm("Bạn có chắc chắn muốn xóa đáp án này không?")) return;
+
+            $.post('/Courses/DeleteAnswer', { answerId: answerId }, function (response) {
+                if (response.success) {
+                    $(`#answer-${answerId}`).remove();
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
+    </script>
+}

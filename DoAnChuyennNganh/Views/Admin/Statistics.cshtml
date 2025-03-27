@@ -1,0 +1,122 @@
+﻿@{
+    ViewData["Title"] = "Thống kê số liệu";
+    Layout = "~/Views/Shared/_Layoutadmin.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Thống kê số liệu</h2>
+
+    <div class="row">
+        <!-- Donut Chart: Số lượng khóa học theo chủ đề -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center font-weight-bold">Số lượng khóa học theo chủ đề</div>
+                <div class="card-body">
+                    <canvas id="coursesBySubjectsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donut Chart: Số lượng người dùng -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center font-weight-bold">Số lượng người dùng</div>
+                <div class="card-body">
+                    <canvas id="userStatisticsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line Chart: Doanh thu theo thời gian -->
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header text-center font-weight-bold">Doanh thu theo thời gian</div>
+                <div class="card-body">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        // Lấy dữ liệu từ ViewBag
+        var courseStats = @Html.Raw(ViewBag.CourseStats);
+        var userStats = @Html.Raw(ViewBag.UserStats);
+        var revenueStats = @Html.Raw(ViewBag.RevenueStats);
+
+        // Donut Chart: Số lượng khóa học theo chủ đề
+        if (courseStats.length > 0) {
+            new Chart(document.getElementById('coursesBySubjectsChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: courseStats.map(cs => cs.Subject),
+                    datasets: [{
+                        label: 'Số lượng khóa học',
+                        data: courseStats.map(cs => cs.Count),
+                        backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+        } else {
+            console.warn("Không có dữ liệu để hiển thị biểu đồ.");
+        }
+
+        // Donut Chart: Số lượng người dùng
+        new Chart(document.getElementById('userStatisticsChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Giảng viên', 'Học viên'],
+                datasets: [{
+                    label: 'Số lượng người dùng',
+                    data: [userStats.Teachers, userStats.Students],
+                    backgroundColor: ['#36a2eb', '#ff6384']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: { enabled: true }
+                }
+            }
+        });
+
+        // Line Chart: Doanh thu theo thời gian
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'line',
+            data: {
+                labels: revenueStats.map(rs => rs.Month),
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: revenueStats.map(rs => rs.Revenue),
+                    borderColor: '#36a2eb',
+                    fill: false,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    x: { title: { display: true, text: 'Tháng/Năm' } },
+                    y: { title: { display: true, text: 'Doanh thu (VNĐ)' } }
+                }
+            }
+        });
+
+    </script>
+}
+

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<DoAnChuyennNganh.Models.Courses>
+@{
+    ViewData["Title"] = "Danh sách khóa học đã được chờ duyệt";
+    Layout = "~/Views/Shared/_Layoutadmin.cshtml";
+}
+    <h2>Danh Sách Khóa Học Đã Được Xét Duyệt</h2>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    <table class="table table-bordered">
+        <thead>
+            <tr class="table-primary">
+                <th>Tên Khóa Học</th>
+                <th>Giảng Viên</th>
+                <th>Giá</th>
+                <th>Mô Tả</th>
+                <th>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model.Where(c => c.Status == CourseStatus.Approved || c.Status == CourseStatus.Hiden))
+            {
+                <tr>
+                    <td>@course.Name</td>
+                    <td>@course.User?.LastName @course.User?.FirstName (@course.User?.Email)</td>
+                    <td>@string.Format("{0:N0}", course.Price) VNĐ</td>
+                    <td>@Html.Raw(course.Description)</td>
+                    <td>
+                        @if (course.Status == CourseStatus.Approved)
+                        {
+                            <form method="post" asp-action="HideCourse" asp-route-id="@course.Id" style="display:inline;">
+                                <button class="btn btn-warning">Dừng khóa học</button>
+                            </form>
+                        }
+                        else if (course.Status == CourseStatus.Hiden)
+                        {
+                            <form method="post" asp-action="UnhideCourse" asp-route-id="@course.Id" style="display:inline;">
+                                <button class="btn btn-info">Tiếp tục khóa học</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

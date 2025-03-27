@@ -1,0 +1,52 @@
+﻿@model IEnumerable<DoAnChuyennNganh.Models.Courses>
+@{
+    ViewData["Title"] = "Danh sách khóa học đang chờ duyệt";
+    Layout = "~/Views/Shared/_Layoutadmin.cshtml";
+}
+    <h2>Danh Sách Khóa Học Đang Chờ Xét Duyệt</h2>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    <table class="table table-bordered">
+        <thead>
+            <tr class="table-primary">
+                <th>Tên Khóa Học</th>
+                <th>Giảng Viên</th>
+                <th>Giá</th>
+                <th>Mô Tả</th>
+                <th>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model.Where(c => c.Status == CourseStatus.UnderReview))
+            {
+                <tr>
+                    <td>@course.Name</td>
+                    <td>@course.User?.LastName @course.User?.FirstName (@course.User?.Email)</td>
+                    <td>@string.Format("{0:N0}", course.Price) VNĐ</td>
+                    <td>@Html.Raw(course.Description)</td>
+                    <td>
+                    <a asp-area="" asp-route-id="@course.Id" asp-controller="Student" asp-action="DetailsCourses" class="btn btn-rounded btn-info">
+                        Trải nghiệm
+                    </a>
+                        <form method="post" asp-action="ApproveCourse" asp-route-id="@course.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-success">
+                            Chấp nhận <span class="btn-icon-right"><i class="fa fa-check"></i></span>
+                        </button>
+                        </form>
+                        <form method="post" asp-action="RejectCourse" asp-route-id="@course.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">
+                            Từ chối <span class="btn-icon-right"><i class="fa fa-close"></i></span>
+                        </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

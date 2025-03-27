@@ -1,0 +1,213 @@
+﻿@model DoAnChuyennNganh.Models.Courses
+
+<div>
+    <a asp-controller="Student" asp-action="ListCoursesUser" class="btn btn-primary py-2 px-3" style="margin-bottom: 0.5cm; border-radius: 15px;">Quay lại</a>
+</div>
+
+<div class="container mt-4">
+    <!-- Thông tin khóa học -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Khóa học: @Model.Name</h2>
+        </div>
+        <div class="card-body">
+            <h4>Thanh tiến độ:</h4>
+            <div class="progress mb-3">
+                <div class="progress-bar" role="progressbar" style="width: @ViewData["CompletionPercentage"]%" aria-valuenow="@ViewData["CompletionPercentage"]" aria-valuemin="0" aria-valuemax="100">
+                    @ViewData["CompletionPercentage"]% Hoàn thành
+                </div>
+            </div>
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+        </div>
+    </div>
+
+    <!-- Nội dung khóa học -->
+    <div class="accordion mt-4" id="sectionsAccordion">
+        @foreach (var section2 in Model.Sections)
+        {
+            var allLecturesCompleted = section2.Lectures.All(l => ViewBag.CompletedLectureIds.Contains(l.Id));
+
+            <div class="card">
+                <div class="card-header" id="heading-@section2.Id">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link section-toggle" type="button" data-toggle="collapse" data-target="#collapse-@section2.Id" aria-expanded="false" aria-controls="collapse-@section2.Id">
+                            @section2.Name
+                            @if (allLecturesCompleted)
+                            {
+                                <span class="text-success">&#10004;</span>
+                            }
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapse-@section2.Id" class="collapse" aria-labelledby="heading-@section2.Id" data-parent="#sectionsAccordion">
+                    <div class="card-body">
+                        @if (section2.Lectures.Any())
+                        {
+                            <ul class="list-group">
+                                @foreach (var lecture in section2.Lectures)
+                                {
+                                    <li class="list-group-item">
+                                        <a asp-route-id="@lecture.Id" asp-route-courseId="@Model.Id" asp-controller="Student" asp-action="DetailsLecture">@lecture.Name</a>
+                                        @if (ViewBag.CompletedLectureIds.Contains(lecture.Id))
+                                        {
+                                            <span class="text-success">&#10004;</span>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted">Không có bài giảng</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Đánh giá -->
+    <div class="card mt-5">
+        <div class="card-header">
+            <h3>Đánh giá</h3>
+        </div>
+        <div class="card-body">
+            @if (ViewBag.Reviews != null && ((IEnumerable<Review>)ViewBag.Reviews).Any())
+            {
+                <ul class="list-group">
+                    @foreach (var review in (IEnumerable<Review>)ViewBag.Reviews)
+                    {
+                        <li class="list-group-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <strong>@review.User.Email</strong>
+                                    <span class="text-muted">- @review.CreatedAt.ToString("dd/MM/yyyy")</span>
+                                </div>
+                                <div>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= review.Rating)
+                                        {
+                                            <i style="color: gold" class="icon-star"></i>
+                                        }
+                                        else
+                                        {
+                                            <i style="color: lightgray" class="icon-star-o"></i>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <p><strong>Đánh giá:</strong> @review.Rating sao</p>
+                            <p>@review.Comment</p>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-muted">Chưa có đánh giá nào.</p>
+            }
+        </div>
+    </div>
+
+    <!-- Gửi đánh giá -->
+    <div class="card mt-5">
+        <div class="card-header">
+            <h3>Gửi đánh giá</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="SubmitReview" method="post">
+                <input type="hidden" name="CourseId" value="@Model.Id" />
+                <input type="hidden" name="UserId" value="@ViewBag.UserId" />
+                <div class="form-group">
+                    <label>Đánh giá:</label>
+                    <div class="rating">
+                        <input type="radio" id="star5" name="Rating" value="5" />
+                        <label for="star5" title="5 sao">
+                            <i class="icon-star"></i>
+                        </label>
+
+                        <input type="radio" id="star4" name="Rating" value="4" />
+                        <label for="star4" title="4 sao">
+                            <i class="icon-star"></i>
+                        </label>
+
+                        <input type="radio" id="star3" name="Rating" value="3" />
+                        <label for="star3" title="3 sao">
+                            <i class="icon-star"></i>
+                        </label>
+
+                        <input type="radio" id="star2" name="Rating" value="2" />
+                        <label for="star2" title="2 sao">
+                            <i class="icon-star"></i>
+                        </label>
+
+                        <input type="radio" id="star1" name="Rating" value="1" />
+                        <label for="star1" title="1 sao">
+                            <i class="icon-star"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Comment">Bình luận:</label>
+                    <textarea name="Comment" id="Comment" class="form-control" rows="4"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-2">Gửi đánh giá</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <style>
+        .rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+        }
+
+            .rating input {
+                display: none;
+            }
+
+            .rating label {
+                font-size: 2rem;
+                color: #FFD700;
+                cursor: pointer;
+            }
+
+            .rating input:checked ~ label i {
+                color: #FFD700;
+            }
+
+            .rating label i {
+                font-size: 2rem;
+                margin: 0 2px;
+                color: #ccc;
+                transition: color 0.2s;
+            }
+
+            .rating label:hover i,
+            .rating label:hover ~ label i {
+                color: #FFD700;
+            }
+    </style>
+    <script>
+        document.querySelectorAll('.star-rating input').forEach(input => {
+            input.addEventListener('change', () => {
+                const rating = input.value;
+                alert(Bạn đã chọn: ${rating} sao);
+            });
+        });
+    </script>
+}

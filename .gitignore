@@ -1,0 +1,38 @@
+# Thư mục build và debug
+bin/
+obj/
+.vs/
+out/
+TestResults/
+coverage/
+logs/
+
+# Cấu hình môi trường và secrets
+**/appsettings*.json
+**/secrets.json
+.env
+
+# Tệp tạm thời và cache
+*.log
+*.tmp
+*.cache
+*.swp
+*.suo
+*.user
+*.db
+
+# Thư viện bên ngoài
+node_modules/
+wwwroot/lib/
+wwwroot/dist/
+wwwroot/node_modules/
+
+# Thư mục của JetBrains Rider hoặc Visual Studio Code
+.idea/
+.vscode/
+
+# Các tệp từ hệ điều hành
+.DS_Store
+Thumbs.db
+service_account_key.json
+credentials.json

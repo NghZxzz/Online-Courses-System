@@ -1,0 +1,38 @@
+﻿@model IEnumerable<DoAnChuyennNganh.Models.Subject>
+
+@{
+    ViewData["Title"] = "QuanLySubject";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>DANH SÁCH CHỦ ĐỀ</h1>
+
+<p>
+    <a asp-action="CreateSubject" class="btn btn-info btn-rounded">
+        <span class="btn-icon-left text-info">
+            <i class="fa fa-plus color-info"></i>
+        </span>Tạo chủ đề mới
+    </a>
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr class="table-primary">
+            <th>
+                Tên Chủ Đề
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                    <a asp-action="EditSubject" asp-route-id="@item.Id" class="btn btn-warning btn-rounded"> <i class="fa fa-pencil color-muted"></i> Thay đổi</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

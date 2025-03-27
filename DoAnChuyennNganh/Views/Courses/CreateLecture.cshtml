@@ -1,0 +1,38 @@
+﻿@model DoAnChuyennNganh.Models.Lectures
+
+@{
+    ViewData["Title"] = "Thêm Bài Giảng";
+}
+
+<h2>Thêm Bài Giảng</h2>
+
+<form asp-action="CreateLecture" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="SectionId" value="@ViewBag.SectionId" />
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Description">Mô tả:</label>
+        <textarea id="Description" name="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="videoFile">Chọn video để tải lên:</label>
+        <input type="file" name="videoFile" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="documentFile">Chọn tài liệu để tải lên:</label>
+        <input type="file" name="documentFile" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Thêm</button>
+</form>
+
+@section Scripts {
+    <script src="//cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+
+        CKEDITOR.replace('Description');
+    </script>
+}

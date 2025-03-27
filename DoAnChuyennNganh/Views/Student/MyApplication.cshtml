@@ -1,0 +1,38 @@
+﻿@model TeacherApplication
+
+<div class="container mt-4">
+    <h2>Đơn đăng ký làm giảng viên</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    @if (Model != null)
+    {
+        <p><strong>Họ tên:</strong> @Model.FullName</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Số điện thoại:</strong> @Model.PhoneNumber</p>
+        <p><strong>Bằng cấp:</strong> @Model.Degree</p>
+        <p><strong>Chuyên ngành:</strong> @Model.Major</p>
+        <p><strong>Trạng thái:</strong> @Model.Status</p>
+
+        <h4>Minh chứng:</h4>
+        @foreach (var file in Model.ApplicationFiles)
+        {
+            <a href="@file.FileUrl" target="_blank">@file.FileName</a>
+
+            <br />
+        }
+    }
+    else
+    {
+        <p>Bạn chưa nộp đơn xin làm giảng viên.</p>
+        <a asp-action="ApplyForTeacher" class="btn btn-primary">Nộp đơn</a>
+    }
+</div>
