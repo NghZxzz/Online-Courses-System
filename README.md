@@ -1,7 +1,5 @@
 # 🎓 Online Learning Platform
 
-![E-Learning](https://via.placeholder.com/800x400.png?text=Online+Learning+Platform)
-
 ## 🚀 Introduction
 Welcome to **Online Learning Platform**, an advanced learning solution built with **ASP.NET Core MVC** on **Visual Studio**. This system provides a seamless learning experience for students, instructors, and administrators, making education easier and more efficient.
 
