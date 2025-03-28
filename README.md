@@ -1,49 +1,51 @@
-# 🎓 E-Learning Platform
+# 🎓 Online Learning Platform
 
+![E-Learning](https://via.placeholder.com/800x400.png?text=Online+Learning+Platform)
 
 ## 🚀 Introduction
-Welcome to the **E-Learning Platform**, an advanced online learning solution built with **ASP.NET Core MVC** on **Visual Studio**. Our platform provides a seamless experience for students, instructors, and administrators, making learning accessible and efficient.
+Welcome to **Online Learning Platform**, an advanced learning solution built with **ASP.NET Core MVC** on **Visual Studio**. This system provides a seamless learning experience for students, instructors, and administrators, making education easier and more efficient.
 
-We leverage **Google Drive API** for secure storage of course materials and integrate **ChatGPT AI** for personalized course recommendations.
+We use **Google Drive API** for secure course material storage and integrate **ChatGPT AI** for intelligent course recommendations.
 
 ## 🛠 Technologies Used
 
-| Technology              | Purpose                                    |
+| Technology               | Purpose                                      |
 |-------------------------|--------------------------------------------|
-| **ASP.NET Core MVC**    | Web framework                             |
-| **Entity Framework Core** | Database interaction                     |
-| **Google Drive API**    | Video & document storage                  |
-| **ChatGPT AI**         | AI-powered course recommendations          |
-| **SQL Server**         | Database management                        |
-| **Bootstrap & jQuery** | Frontend design                           |
+| **ASP.NET Core MVC**    | Web development framework                   |
+| **Entity Framework Core** | Database interaction                        |
+| **Google Drive API**    | Store videos & documents                    |
+| **ChatGPT AI**         | Smart course recommendations                |
+| **SQL Server**         | Database management                         |
+| **Bootstrap & jQuery** | User interface design                       |
 
 ## ✨ Features
 
-✔️ **User Management**
-- 🆕 Register & login (Email/Google)
-- 🔑 Password recovery
+✔️ **User Management**  
+- 🆕 Register, log in, authenticate via Email/Google  
+- 🔑 Reset password, update personal information  
 
-✔️ **Course Management**
-- 📚 Browse and search courses
-- 🏷️ Filter by category, instructor, and price
-- 📖 View course details
-- 🎥 Access videos, documents, and quizzes
+✔️ **Course System**  
+- 📚 Browse and search courses by category  
+- 🏷️ Filter by instructor, price, and ratings  
+- 📖 View course details with descriptions, content, and materials  
+- 🎥 Access lecture videos directly from Google Drive  
+- 📝 Take multiple-choice quizzes in each lesson  
 
-✔️ **Learning Progress**
-- 📊 Track course completion
-- 📝 Submit assignments and quizzes
+✔️ **Learning Progress**  
+- 📊 Track individual learning progress  
+- 📝 Students can complete quizzes and view results
 
-✔️ **Instructor & Admin**
-- ✏️ Create & manage courses
-- ✅ Approve courses and manage users
+✔️ **For Instructors & Administrators**  
+- ✏️ Instructors can create and edit courses  
+- 📂 Manage lecture content, quizzes, and materials  
+- ✅ Administrators review courses, manage users, and system reports  
 
 ## 🛠 Installation & Setup
 
 ### 📌 Requirements:
-- 💻 **Visual Studio 2022** (or later)
-- 🏗 **.NET 6.0** (or later)
+- 💻 **Visual Studio 2022** (or newer)
+- 🏗 **.NET 6.0** (or newer)
 - 📀 **SQL Server**
 - 🔑 **Google Drive API Key**
 
-🌟 **Happy Learning!** 🎓🚀
 
